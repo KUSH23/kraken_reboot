@@ -2,6 +2,8 @@
 #include <ros/time.h>
 #include <sensor_msgs/BatteryState.h>
 #include <Arduino.h>
+#include <Servo.h>
+#include <std_msgs/UInt16.h>
 
 int i=0;
 const int curr_calib=514;
@@ -9,23 +11,37 @@ const int curr_calib=514;
 float v_gain=25.5;
 int BAT_ipin=A0, BAT_vpin=A4;
 
+Servo servo1, servo2, servo3;
+
 ros::NodeHandle nh;
 void prepareBatteryStates();
 void getCurrent();
 void getVoltage();
 
+ void servo_cb( const std_msgs::UInt16& cmd_msg){
+     servo1.write(cmd_msg.data); //set servo angle, should be from 0-180 
+     servo2.write(cmd_msg.data);
+     servo3.write(cmd_msg.data); 
+     //digitalWrite(13, HIGH-digitalRead(13));  //toggle led  
+   }
+
 sensor_msgs::BatteryState BAT_State;
 ros::Publisher BAT_StatePub("/kraken/Battery",&BAT_State);
-
+ros::Subscriber<std_msgs::UInt16> servoSub("servo", servo_cb);
 
 void setup()
 {
   nh.getHardware()->setBaud(57600);
   nh.initNode();
   nh.advertise(BAT_StatePub);
+  nh.subscribe(servoSub);
   pinMode(13,OUTPUT);
   delay(50);
   prepareBatteryStates();
+  servo1.attach(3); //attach it to pin 3
+  servo2.attach(9);
+  servo3.attach(10);
+
 }
 
 void loop()
@@ -105,3 +121,4 @@ void getVoltage()
     }
   }
 }
+
