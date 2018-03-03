@@ -99,34 +99,42 @@ def getVal(rawdata):
 	global pubData
 	floatData = []
 	data = rawdata.split('\r')
-	for i in range(1,len(data)-1):
-		datal = (data[i]).split(',')
+        try:
+		for i in range(1,len(data)-1):
+			datal = (data[i]).split(',')
+	 
+			for j in range(1,len(datal)):
+				if (datal[j] == 'A'):
+					floatData += [1.0]
+				elif(datal[j] == 'I'):
+					floatData += [0.0]
+				else:
+					floatData += [float(datal[j])]
 
-		for j in range(1,len(datal)):
-			if (datal[j] == 'A'):
-				floatData += [1.0]
-			elif(datal[j] == 'I'):
-				floatData += [0.0]
-			else:
-				floatData += [float(datal[j])]
+		print floatData,len(floatData)
 
-	print floatData,len(floatData)
+		if(len(floatData) == 24):
 
-	if(len(floatData) == 24):
+		#print (floatData)
 
-	#print (floatData)
-
-		#pubData.data[0] = floatData[1]   #roll
-		#pubData.data[1] = floatData[0]   #pitch
-		#pubData.data[2] = floatData[2]   #yaw
-		pubData.twist.twist.linear.x = -floatData[15]/1000.0  #Longitudinal Vel
-		pubData.twist.twist.linear.y = floatData[14]/1000.0  #Y Vel
-		pubData.twist.twist.linear.z = floatData[16]/1000.0  #Normal Vel
-		#pubData.data[6] = floatData[22]  #altitude
-		#pubData.data[7] = floatData[5]   #depth  (does not work in our model)
-		#print floatData[5]
-		#pubData.data[8] = floatData[4]   #temperature
-		#pubData.data[9] = floatData[7	]   #Sound Velocity
+			#pubData.data[0] = floatData[1]   #roll
+			#pubData.data[1] = floatData[0]   #pitch
+			#pubData.data[2] = floatData[2]   #yaw
+			pubData.twist.twist.linear.x = -floatData[15]/100.0  #Longitudinal Vel
+			pubData.twist.twist.linear.y = floatData[14]/100.0  #Y Vel
+			pubData.twist.twist.linear.z = floatData[16]/100.0  #Normal Vel
+			#pubData.data[6] = floatData[22]  #altitude
+			#pubData.data[7] = floatData[5]   #depth  (does not work in our model)
+			#print floatData[5]
+			#pubData.data[8] = floatData[4]   #temperature
+			#pubData.data[9] = floatData[7	]   #Sound Velocity
+        except IOError as (errno, strerror):
+            print "I/O error({0}): {1}".format(errno, strerror)
+        except ValueError:
+            print "No valid integer in line."
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+            raise
 
 if __name__ == '__main__':
 
