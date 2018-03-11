@@ -24,7 +24,7 @@ ros::Subscriber<kraken_msgs::thrusterCmd> sub("/kraken/control/seabotixData", &t
 
 void setup()
 {
-  nh.getHardware()->setBaud(115200);
+  nh.getHardware()->setBaud(57600);
   nh.initNode();
   Wire.begin();
   nh.subscribe(sub);
